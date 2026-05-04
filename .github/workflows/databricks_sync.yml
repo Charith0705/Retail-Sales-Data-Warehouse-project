@@ -26,4 +26,3 @@ jobs:
         run: |
           databricks repos update "/Workspace/Sales Data warehouse/Retail-Sales-Data-Warehouse-project" --branch main 
           
-          
