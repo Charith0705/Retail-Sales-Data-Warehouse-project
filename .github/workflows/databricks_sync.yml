@@ -25,4 +25,5 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           # Replace the path below with the actual path to your Git Folder in Databricks
-          databricks workspace update-repo /Workspace/Users/your.email@company.com/your-repo-name --branch main
+          databricks workspace update-repo /Workspace/Sales Data warehouse/Retail-Sales-Data-Warehouse-project --branch main
+          
