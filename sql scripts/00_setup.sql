@@ -1,11 +1,11 @@
-CREATE CATALOG IF NOT EXISTS sales_dwh
+CREATE CATALOG IF NOT EXISTS sales_dwh;
 
 USE CATALOG sales_dwh;
 
-CREATE SCHEMA IF NOT EXISTS sales_dwh.bronze
+CREATE SCHEMA IF NOT EXISTS sales_dwh.bronze;
 
-CREATE SCHEMA IF NOT EXISTS sales_dwh.silver
+CREATE SCHEMA IF NOT EXISTS sales_dwh.silver;
 
-CREATE SCHEMA IF NOT EXISTS sales_dwh.gold
+CREATE SCHEMA IF NOT EXISTS sales_dwh.gold;
 
 SHOW SCHEMAS IN sales_dwh;
