@@ -93,7 +93,7 @@ USING (
 ON target.StoreID = source.StoreID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── SALES ─────────────────────── ───
+-- ── SALES ───────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_sales (
   TransactionID INT,
@@ -127,7 +127,7 @@ USING (
 ON target.TransactionID = source.TransactionID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── VALIDATION ──────────────────────────
+-- ── VALIDATION ───────────────────────────────────────────────
 SELECT 'raw_customers' AS table_name, COUNT(*) AS row_count
 FROM sales_dwh.bronze.raw_customers
 UNION ALL
