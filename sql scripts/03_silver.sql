@@ -34,8 +34,7 @@ USING (
   )
   WHERE rn = 1
 ) AS src
-INNER JOIN sales_dwh.silver.dim_customer tgt
-  ON  src.CustomerID = tgt.CustomerID
+INNER JOIN sales_dwh.silver.dim_customer tgt ON  src.CustomerID = tgt.CustomerID
   AND tgt.IsActive   = 1
 WHERE
   src.City    <> tgt.City
