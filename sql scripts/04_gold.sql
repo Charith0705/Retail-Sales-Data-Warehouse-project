@@ -11,7 +11,7 @@ USE SCHEMA gold;
 
 CREATE OR REPLACE TABLE sales_dwh.gold.dim_customer
 USING DELTA
-LOCATION 's3://your-bucket-name/gold/dim_customer/'
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/gold/dim_customer/'
 AS
 SELECT
   CustomerSK,
@@ -31,7 +31,7 @@ FROM sales_dwh.silver.dim_customer;
 
 CREATE OR REPLACE TABLE sales_dwh.gold.dim_product
 USING DELTA
-LOCATION 's3://your-bucket-name/gold/dim_product/'
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/gold/dim_product/'
 AS
 SELECT
   ProductSK,
@@ -46,7 +46,7 @@ FROM sales_dwh.silver.dim_product;
 
 CREATE OR REPLACE TABLE sales_dwh.gold.dim_store
 USING DELTA
-LOCATION 's3://your-bucket-name/gold/dim_store/'
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/gold/dim_store/'
 AS
 SELECT
   StoreSK,
@@ -59,7 +59,7 @@ FROM sales_dwh.silver.dim_store;
 
 CREATE OR REPLACE TABLE sales_dwh.gold.fact_sales
 USING DELTA
-LOCATION 's3://your-bucket-name/gold/fact_sales/'
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/gold/fact_sales/'
 AS
 SELECT
   SalesSK,

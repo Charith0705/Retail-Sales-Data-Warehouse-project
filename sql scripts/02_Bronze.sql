@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_customers (
   load_type    STRING
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/bronze/customers/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/customers/';
 
 MERGE INTO sales_dwh.bronze.raw_customers AS target
 USING (
@@ -28,7 +28,7 @@ USING (
     current_timestamp()     AS ingested_at,
     'incremental'           AS load_type
   FROM read_files(
-    's3://your-bucket-name/sftp-landing/customers_src*.csv',
+    's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/customers_src*.csv',
     format       => 'csv',
     header       => 'true',
     inferSchema  => 'true'
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_products (
   load_type   STRING
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/bronze/products/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/products/';
 
 MERGE INTO sales_dwh.bronze.raw_products AS target
 USING (
@@ -60,7 +60,7 @@ USING (
     current_timestamp()              AS ingested_at,
     'incremental'                    AS load_type
   FROM read_files(
-    's3://your-bucket-name/sftp-landing/products_src*.csv',
+    's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/products_src*.csv',
     format      => 'csv',
     header      => 'true',
     inferSchema => 'true'
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_stores (
   load_type   STRING
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/bronze/stores/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/stores/';
 
 MERGE INTO sales_dwh.bronze.raw_stores AS target
 USING (
@@ -90,7 +90,7 @@ USING (
     current_timestamp()  AS ingested_at,
     'incremental'        AS load_type
   FROM read_files(
-    's3://your-bucket-name/sftp-landing/stores_src*.csv',
+    's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/stores_src*.csv',
     format      => 'csv',
     header      => 'true',
     inferSchema => 'true'
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_sales (
   load_type     STRING
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/bronze/sales/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/sales/';
 
 MERGE INTO sales_dwh.bronze.raw_sales AS target
 USING (
@@ -126,7 +126,7 @@ USING (
     current_timestamp()        AS ingested_at,
     'incremental'              AS load_type
   FROM read_files(
-    's3://your-bucket-name/sftp-landing/sales_transactions_src*.csv',
+    's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/sales_transactions_src*.csv',
     format      => 'csv',
     header      => 'true',
     inferSchema => 'true'

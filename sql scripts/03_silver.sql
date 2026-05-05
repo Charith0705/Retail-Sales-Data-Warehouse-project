@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer (
   IsActive     INT   -- 1 = current, 0 = expired
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/silver/dim_customer/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_customer/';
 
 
 MERGE INTO sales_dwh.silver.dim_customer AS target
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product (
   EffectiveDate DATE
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/silver/dim_product/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_product/';
 
 MERGE INTO sales_dwh.silver.dim_product AS target
 USING (
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store (
   Region    STRING
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/silver/dim_store/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_store/';
 
 MERGE INTO sales_dwh.silver.dim_store AS target
 USING (
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales (
   TxnDate       DATE
 )
 USING DELTA
-LOCATION 's3://your-bucket-name/silver/fact_sales/';
+LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/fact_sales/';
 
 MERGE INTO sales_dwh.silver.fact_sales AS target
 USING (

@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 # ── CONFIG ──────────────────────────────────────────────────
-BUCKET         = "s3://your-bucket-name"
+BUCKET         = "s3://sales-dwh-bucket-charith-977574653589-us-east-2-an"
 SFTP_ZONE      = f"{BUCKET}/sftp-landing/"
 BRONZE_ZONE    = f"{BUCKET}/bronze/"
 SILVER_ZONE    = f"{BUCKET}/silver/"
