@@ -150,7 +150,7 @@ USING (
     ds.StoreSK,
     CAST(s.Quantity AS INT)                              AS Quantity,
     CAST(s.Quantity AS DECIMAL(10,2)) * dp.UnitPrice     AS Amount,
-    TO_DATE(s.TxnDate, 'dd-MM-yyyy')                     AS TxnDate
+    TO_DATE(s.TxnDate, 'yyyy-MM-dd')                     AS TxnDate
   FROM sales_dwh.bronze.raw_sales           s
   LEFT JOIN sales_dwh.silver.dim_customer   dc
     ON  s.CustomerID = dc.CustomerID
