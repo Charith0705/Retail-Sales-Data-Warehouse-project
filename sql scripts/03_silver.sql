@@ -20,30 +20,30 @@ LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_cus
 -- Step 1: Expire old records where City or Address changed
 MERGE INTO sales_dwh.silver.dim_customer AS target
 USING (
-  -- Deduplicate first — take the latest record per CustomerID
   SELECT
-    CustomerID,
-    TRIM(INITCAP(CustomerName)) AS CustomerName,
-    LOWER(TRIM(Email))          AS Email,
-    TRIM(City)                  AS City,
-    TRIM(Address)               AS Address
+    src.CustomerID,
+    TRIM(INITCAP(src.CustomerName)) AS CustomerName,
+    LOWER(TRIM(src.Email))          AS Email,
+    TRIM(src.City)                  AS City,
+    TRIM(src.Address)               AS Address
   FROM (
     SELECT *,
       ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY ingested_at DESC) AS rn
     FROM sales_dwh.bronze.raw_customers
-  )
-  WHERE rn = 1
-) AS src
-INNER JOIN sales_dwh.silver.dim_customer tgt ON  src.CustomerID = tgt.CustomerID
-  AND tgt.IsActive   = 1
-WHERE
-  src.City    <> tgt.City
-  OR src.Address <> tgt.Address
-ON target.CustomerID = src.CustomerID AND target.IsActive = 1
+  ) src
+  INNER JOIN sales_dwh.silver.dim_customer tgt
+    ON  src.CustomerID = tgt.CustomerID
+    AND tgt.IsActive   = 1
+  WHERE src.rn = 1
+  AND (src.City <> tgt.City OR src.Address <> tgt.Address)
+) AS changed
+ON target.CustomerID = changed.CustomerID
+AND target.IsActive  = 1
 WHEN MATCHED THEN UPDATE SET
   target.EndDate  = current_date() - INTERVAL 1 DAY,
   target.IsActive = 0;
 
+  
 -- Step 2: Insert new and changed customers
 INSERT INTO sales_dwh.silver.dim_customer
   (CustomerID, CustomerName, Email, City, Address, StartDate, EndDate, IsActive)
