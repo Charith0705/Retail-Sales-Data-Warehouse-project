@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_customers (
   City         STRING,
   Address      STRING,
   LastUpdated  STRING,
-  ingested_at  TIMESTAMP,
-  load_type    STRING
+  ingested_at  TIMESTAMP
 )
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/customers/';
@@ -25,12 +24,7 @@ USING (
     City,
     Address,
     LastUpdated,
-    current_timestamp() AS ingested_at,
-    CASE
-      WHEN (SELECT COUNT(*) FROM sales_dwh.bronze.raw_customers) = 0
-      THEN 'initial'
-      ELSE 'incremental'
-    END AS load_type
+    current_timestamp() AS ingested_at
   FROM read_files(
     's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/customers_src*.csv',
     format      => 'csv',
@@ -48,8 +42,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_products (
   ProductName STRING,
   Category    STRING,
   UnitPrice   DECIMAL(10,2),
-  ingested_at TIMESTAMP,
-  load_type   STRING
+  ingested_at TIMESTAMP
 )
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/products/';
@@ -57,16 +50,11 @@ LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/product
 MERGE INTO sales_dwh.bronze.raw_products AS target
 USING (
   SELECT
-    CAST(ProductID AS INT)           AS ProductID,
+    CAST(ProductID AS INT) AS ProductID,
     ProductName,
     Category,
     CAST(UnitPrice AS DECIMAL(10,2)) AS UnitPrice,
-    current_timestamp()              AS ingested_at,
-    CASE
-      WHEN (SELECT COUNT(*) FROM sales_dwh.bronze.raw_products) = 0
-      THEN 'initial'
-      ELSE 'incremental'
-    END AS load_type
+    current_timestamp() AS ingested_at
   FROM read_files(
     's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/products_src*.csv',
     format      => 'csv',
@@ -83,8 +71,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_stores (
   StoreID     INT,
   StoreName   STRING,
   Region      STRING,
-  ingested_at TIMESTAMP,
-  load_type   STRING
+  ingested_at TIMESTAMP
 )
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/stores/';
@@ -95,12 +82,7 @@ USING (
     CAST(StoreID AS INT) AS StoreID,
     StoreName,
     Region,
-    current_timestamp()  AS ingested_at,
-    CASE
-      WHEN (SELECT COUNT(*) FROM sales_dwh.bronze.raw_stores) = 0
-      THEN 'initial'
-      ELSE 'incremental'
-    END AS load_type
+    current_timestamp()  AS ingested_at
   FROM read_files(
     's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/stores_src*.csv',
     format      => 'csv',
@@ -120,8 +102,7 @@ CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_sales (
   StoreID       INT,
   Quantity      INT,
   TxnDate       STRING,
-  ingested_at   TIMESTAMP,
-  load_type     STRING
+  ingested_at   TIMESTAMP
 )
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/sales/';
@@ -135,12 +116,7 @@ USING (
     CAST(StoreID       AS INT) AS StoreID,
     CAST(Quantity      AS INT) AS Quantity,
     TxnDate,
-    current_timestamp()        AS ingested_at,
-    CASE
-      WHEN (SELECT COUNT(*) FROM sales_dwh.bronze.raw_sales) = 0
-      THEN 'initial'
-      ELSE 'incremental'
-    END AS load_type
+    current_timestamp() AS ingested_at
   FROM read_files(
     's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/sftp-landing/sales_transactions_src*.csv',
     format      => 'csv',
@@ -152,15 +128,17 @@ ON target.TransactionID = source.TransactionID
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── VALIDATION ───────────────────────────────────────────────
-SELECT 'raw_customers' AS table_name, COUNT(*) AS row_count,
-       MAX(load_type) AS load_type
+SELECT 'raw_customers' AS table_name, COUNT(*) AS row_count
 FROM sales_dwh.bronze.raw_customers
 UNION ALL
-SELECT 'raw_products', COUNT(*), MAX(load_type)
+
+SELECT 'raw_products', COUNT(*) 
 FROM sales_dwh.bronze.raw_products
 UNION ALL
-SELECT 'raw_stores', COUNT(*), MAX(load_type)
+
+SELECT 'raw_stores', COUNT(*) 
 FROM sales_dwh.bronze.raw_stores
 UNION ALL
-SELECT 'raw_sales', COUNT(*), MAX(load_type)
+
+SELECT 'raw_sales', COUNT(*)
 FROM sales_dwh.bronze.raw_sales;
