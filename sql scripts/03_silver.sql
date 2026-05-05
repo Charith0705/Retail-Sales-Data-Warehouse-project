@@ -1,6 +1,6 @@
 USE CATALOG sales_dwh;
 USE SCHEMA silver;
-
+  
 -- ── DimCustomer (SCD Type 2) ─────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer (
