@@ -142,3 +142,4 @@ UNION ALL
 
 SELECT 'raw_sales', COUNT(*)
 FROM sales_dwh.bronze.raw_sales;
+
