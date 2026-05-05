@@ -1,7 +1,7 @@
 USE CATALOG sales_dwh;
 USE SCHEMA bronze;
 
--- ── CUSTOMERS ────────────────────────────────────────────
+-- ── CUSTOMERS ───────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_customers (
   CustomerID   INT,
