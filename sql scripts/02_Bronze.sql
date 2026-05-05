@@ -1,7 +1,7 @@
 USE CATALOG sales_dwh;
 USE SCHEMA bronze;
 
--- ── CUSTOMERS ───────────────────────────────────────────────
+-- ── CUSTOMERS 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_customers (
   CustomerID   INT,
@@ -35,7 +35,7 @@ USING (
 ON target.CustomerID = source.CustomerID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── PRODUCTS ────────────────────────────────────────────────
+-- ── PRODUCTS 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_products (
   ProductID   INT,
@@ -65,7 +65,7 @@ USING (
 ON target.ProductID = source.ProductID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── STORES ──────────────────────────────────────────────────
+-- ── STORES 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_stores (
   StoreID     INT,
@@ -93,7 +93,7 @@ USING (
 ON target.StoreID = source.StoreID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── SALES ──────────────────────────────────────────────────
+-- ── SALES 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_sales (
   TransactionID INT,
