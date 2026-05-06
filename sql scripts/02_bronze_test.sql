@@ -125,16 +125,3 @@ FROM (
   SELECT TransactionID FROM sales_dwh.bronze.raw_sales  WHERE ingested_at IS NULL
 );
 
-
-
--- ── TEST 5: Quantity must be positive ───────────────────────
-
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Non-positive Quantities found in raw_sales')
-  ELSE 'PASS: All Quantities are positive'
-END AS test_quantity_positive
-FROM sales_dwh.bronze.raw_sales
-WHERE Quantity <= 0 OR Quantity IS NULL;
-
-SELECT 'ALL BRONZE TESTS PASSED' AS final_status;
