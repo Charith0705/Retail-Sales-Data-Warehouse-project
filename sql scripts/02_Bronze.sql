@@ -40,7 +40,6 @@ WHEN MATCHED THEN UPDATE SET
   target.Address      = source.Address,
   target.LastUpdated  = source.LastUpdated,
   target.ingested_at  = source.ingested_at,
-  target.load_type    = source.load_type
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── PRODUCTS 
@@ -76,7 +75,6 @@ WHEN MATCHED THEN UPDATE SET
   target.Category    = source.Category,
   target.UnitPrice   = source.UnitPrice,
   target.ingested_at = source.ingested_at,
-  target.load_type   = source.load_type
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── STORES 
@@ -109,7 +107,6 @@ WHEN MATCHED THEN UPDATE SET
   target.StoreName   = source.StoreName,
   target.Region      = source.Region,
   target.ingested_at = source.ingested_at,
-  target.load_type   = source.load_type
 
 WHEN NOT MATCHED THEN INSERT *;
 
@@ -152,7 +149,7 @@ WHEN MATCHED THEN UPDATE SET
   target.Quantity    = source.Quantity,
   target.TxnDate     = source.TxnDate,
   target.ingested_at = source.ingested_at,
-  target.load_type   = source.load_type
+
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── VALIDATION ──────────────────────────────────────────────────
