@@ -132,7 +132,11 @@ USING (
     dp.ProductSK,
     ds.StoreSK,
     CAST(s.Quantity AS INT)                            AS Quantity,
-    CAST(s.Quantity AS DECIMAL(10,2)) * dp.UnitPrice   AS Amount,
+    CASE
+      WHEN dp.UnitPrice IS NOT NULL
+      THEN CAST(s.Quantity AS DECIMAL(10,2)) * dp.UnitPrice
+      ELSE NULL
+    END
     TO_DATE(s.TxnDate, 'yyyy-MM-dd')                   AS TxnDate
   FROM (
     -- Deduplicate sales too
@@ -151,6 +155,13 @@ USING (
   AND   s.TransactionID IS NOT NULL
 ) AS source
 ON target.TransactionID = source.TransactionID
+WHEN MATCHED THEN UPDATE SET
+  target.CustomerSK = source.CustomerSK,
+  target.ProductSK  = source.ProductSK,
+  target.StoreSK    = source.StoreSK,
+  target.Quantity   = source.Quantity,
+  target.Amount     = source.Amount,
+  target.TxnDate    = source.TxnDate
 WHEN NOT MATCHED THEN INSERT
   (TransactionID, CustomerSK, ProductSK, StoreSK, Quantity, Amount, TxnDate)
 VALUES
