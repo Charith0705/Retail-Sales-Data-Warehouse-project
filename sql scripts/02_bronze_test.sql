@@ -109,7 +109,7 @@ FROM (
 SELECT TransactionID, COUNT(*) AS cnt
   FROM sales_dwh.bronze.raw_sales
   GROUP BY TransactionID
-  HAVING cnt > 1
+  HAVING cnt > 1;
 
 SELECT CASE
   WHEN COUNT(*) > 0
