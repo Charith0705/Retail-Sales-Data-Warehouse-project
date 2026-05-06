@@ -136,7 +136,7 @@ USING (
       WHEN dp.UnitPrice IS NOT NULL
       THEN CAST(s.Quantity AS DECIMAL(10,2)) * dp.UnitPrice
       ELSE NULL
-    END
+    END as Amount,
     TO_DATE(s.TxnDate, 'yyyy-MM-dd')                   AS TxnDate
   FROM (
     -- Deduplicate sales too
