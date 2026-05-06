@@ -38,27 +38,27 @@ Source CSVs (SFTP Landing)
 └──────────────────┘
         │
 ┌──────────────────┐
-│  03_bronze_test  │  ← Gate 1: stops pipeline if Bronze checks fail
+│  02_bronze_test  │  ← Gate 1: stops pipeline if Bronze checks fail
 └──────────────────┘
         │
         ▼
 ┌──────────────────┐
 │  Silver Layer    │  ← Transform, SCD2, derive amounts, load dims + facts
-│  04_silver.sql   │
+│  03_silver.sql   │
 └──────────────────┘
         │
 ┌──────────────────┐
-│  05_silver_test  │  ← Gate 2: stops pipeline if Silver checks fail
+│  03_silver_test  │  ← Gate 2: stops pipeline if Silver checks fail
 └──────────────────┘
         │
         ▼
 ┌──────────────────┐
 │  Gold Layer      │  ← Final presentation tables written to S3 Gold zone
-│  06_gold.sql     │
+│  04_gold.sql     │
 └──────────────────┘
         │
 ┌──────────────────┐
-│  07_gold_test    │  ← Gate 3: stops pipeline if Gold checks fail
+│  04_gold_test    │  ← Gate 3: stops pipeline if Gold checks fail
 └──────────────────┘
 ```
 
@@ -135,7 +135,7 @@ Source CSVs (SFTP Landing)
                              │
 ┌──────────────┐    ┌────────▼────────┐    ┌─────────────┐
 │  DimProduct  │    │   FactSales     │    │  DimStore   │
-│  ProductSK PK│◄───│  CustomerSK  FK │───►│  StoreSK PK │
+│  ProductSK PK│───►│  CustomerSK  FK │◄───│  StoreSK PK │
 │  ProductID NK│    │  ProductSK   FK │    │  StoreID  NK│
 │  UnitPrice   │    │  StoreSK     FK │    │  StoreName  │
 └──────────────┘    │  Quantity       │    │  Region     │
@@ -191,14 +191,12 @@ s3://bucket/archive/silver/customers/
 
 ## Testing Strategy
 
-Each layer has a dedicated test script that runs as the next task in the Databricks Workflow. Tests use deliberate `1/0` division to fail the job if a check fails.
+Each layer has a dedicated test script that runs as the next task in the Databricks Workflow.
 
 ### Bronze Tests
 - Row count > 0 for all 4 tables
-- No null primary keys (CustomerID, ProductID, StoreID, TransactionID)
 - No duplicate primary keys
 - `ingested_at` not null
-- UnitPrice and Quantity are positive
 
 ### Silver Tests
 - No null surrogate keys
@@ -269,25 +267,10 @@ s3://your-bucket/sftp-landing/sales_transactions_src_DDMMYYYYHHMMSS.csv
 
 ### Run the Pipeline
 
-Trigger the Databricks Workflow manually or push to `main` to trigger via GitHub Actions.  
+Trigger the Databricks Workflow at everyday 5:30AM automatically with trigger scheduling.  
 The workflow runs all 7 tasks in order and stops automatically if any test gate fails.
 
 ---
-
-## Environment Configuration
-
-Update the S3 bucket path in all scripts before running:
-
-```sql
--- Replace this in all .sql files
-'s3://your-bucket-name/...'
-```
-
-```python
-# Replace this in 01_archival.py
-BUCKET = "s3://your-bucket-name"
-```
-
 ### S3 Folder Structure Required
 ```
 s3://your-bucket/
@@ -299,14 +282,4 @@ s3://your-bucket/
     ├── sftp/
     ├── bronze/
     └── silver/
-```
-
-### AWS IAM Policy Required
-The Databricks IAM role needs the following S3 permissions:
-```json
-{
-  "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject",
-             "s3:ListBucket", "s3:GetBucketLocation"],
-  "Resource": ["arn:aws:s3:::your-bucket", "arn:aws:s3:::your-bucket/*"]
-}
 ```
