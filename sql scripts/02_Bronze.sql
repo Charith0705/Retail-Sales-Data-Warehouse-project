@@ -39,7 +39,7 @@ WHEN MATCHED THEN UPDATE SET
   target.City         = source.City,
   target.Address      = source.Address,
   target.LastUpdated  = source.LastUpdated,
-  target.ingested_at  = source.ingested_at,
+  target.ingested_at  = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── PRODUCTS 
@@ -74,7 +74,7 @@ WHEN MATCHED THEN UPDATE SET
   target.ProductName = source.ProductName,
   target.Category    = source.Category,
   target.UnitPrice   = source.UnitPrice,
-  target.ingested_at = source.ingested_at,
+  target.ingested_at = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── STORES 
@@ -106,7 +106,7 @@ ON target.StoreID = source.StoreID
 WHEN MATCHED THEN UPDATE SET
   target.StoreName   = source.StoreName,
   target.Region      = source.Region,
-  target.ingested_at = source.ingested_at,
+  target.ingested_at = source.ingested_at
 
 WHEN NOT MATCHED THEN INSERT *;
 
@@ -148,7 +148,7 @@ WHEN MATCHED THEN UPDATE SET
   target.StoreID     = source.StoreID,
   target.Quantity    = source.Quantity,
   target.TxnDate     = source.TxnDate,
-  target.ingested_at = source.ingested_at,
+  target.ingested_at = source.ingested_at
 
 WHEN NOT MATCHED THEN INSERT *;
 
