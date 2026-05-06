@@ -125,6 +125,13 @@ USING (
   )
 ) AS source
 ON target.TransactionID = source.TransactionID
+WHEN MATCHED THEN UPDATE SET
+  target.CustomerName = source.CustomerName,
+  target.Email        = source.Email,
+  target.City         = source.City,
+  target.Address      = source.Address,
+  target.LastUpdated  = source.LastUpdated,
+  target.ingested_at  = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── VALIDATION ──────────────────────────────────────────────────
