@@ -106,6 +106,11 @@ FROM (
   HAVING cnt > 1
 );
 
+SELECT TransactionID, COUNT(*) AS cnt
+  FROM sales_dwh.bronze.raw_sales
+  GROUP BY TransactionID
+  HAVING cnt > 1
+
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
