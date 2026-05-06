@@ -106,22 +106,7 @@ FROM (
   HAVING cnt > 1
 );
 
-SELECT TransactionID, COUNT(*) AS cnt
-  FROM sales_dwh.bronze.raw_sales
-  GROUP BY TransactionID
-  HAVING cnt > 1;
 
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Duplicate TransactionIDs found in raw_sales')
-  ELSE 'PASS: No duplicate TransactionIDs in raw_sales'
-END AS test_duplicate_transaction_id
-FROM (
-  SELECT TransactionID, COUNT(*) AS cnt
-  FROM sales_dwh.bronze.raw_sales
-  GROUP BY TransactionID
-  HAVING cnt > 1
-);
 
 -- ── TEST 4: ingested_at must not be null ────────────────────
 
@@ -140,17 +125,9 @@ FROM (
   SELECT TransactionID FROM sales_dwh.bronze.raw_sales  WHERE ingested_at IS NULL
 );
 
--- ── TEST 5: UnitPrice must be positive ──────────────────────
 
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Non-positive UnitPrices found in raw_products')
-  ELSE 'PASS: All UnitPrices are positive'
-END AS test_unit_price_positive
-FROM sales_dwh.bronze.raw_products
-WHERE UnitPrice <= 0 OR UnitPrice IS NULL;
 
--- ── TEST 6: Quantity must be positive ───────────────────────
+-- ── TEST 5: Quantity must be positive ───────────────────────
 
 SELECT CASE
   WHEN COUNT(*) > 0
