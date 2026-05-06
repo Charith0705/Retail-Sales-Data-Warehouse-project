@@ -3,7 +3,17 @@ USE SCHEMA silver;
   
 -- ── DimCustomer (SCD Type 2) ─────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer 
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer (
+  CustomerSK   BIGINT GENERATED ALWAYS AS IDENTITY,
+  CustomerID   INT,
+  CustomerName STRING,
+  Email        STRING,
+  City         STRING,
+  Address      STRING,
+  StartDate    DATE,
+  EndDate      DATE,
+  IsActive     INT
+)
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_customer/';
 
@@ -11,25 +21,21 @@ LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_cus
 MERGE INTO sales_dwh.silver.dim_customer AS target
 USING (
   SELECT
-    src.CustomerID,
-    TRIM(INITCAP(src.CustomerName)) AS CustomerName,
-    LOWER(TRIM(src.Email))          AS Email,
-    TRIM(src.City)                  AS City,
-    TRIM(src.Address)               AS Address
+    CustomerID,
+    TRIM(INITCAP(CustomerName)) AS CustomerName,
+    LOWER(TRIM(Email))          AS Email,
+    TRIM(City)                  AS City,
+    TRIM(Address)               AS Address
   FROM (
     SELECT *,
       ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY ingested_at DESC) AS rn
     FROM sales_dwh.bronze.raw_customers
-  ) src
-  INNER JOIN sales_dwh.silver.dim_customer tgt
-    ON  src.CustomerID = tgt.CustomerID
-    AND tgt.IsActive   = 1
-  WHERE src.rn = 1
-  AND (src.City <> tgt.City OR src.Address <> tgt.Address)
-) AS changed
-ON target.CustomerID = changed.CustomerID
+  )
+  WHERE rn = 1
+) AS source
+ON target.CustomerID = source.CustomerID
 AND target.IsActive  = 1
-WHEN MATCHED THEN UPDATE SET
+WHEN MATCHED AND (source.City <> target.City OR source.Address <> target.Address) THEN UPDATE SET
   target.EndDate  = current_date() - INTERVAL 1 DAY,
   target.IsActive = 0;
 
@@ -61,7 +67,14 @@ AND NOT EXISTS (
 
 -- ── DimProduct (Type 1) ──────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product 
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product (
+  ProductSK     BIGINT GENERATED ALWAYS AS IDENTITY,
+  ProductID     INT,
+  ProductName   STRING,
+  Category      STRING,
+  UnitPrice     DECIMAL(10,2),
+  EffectiveDate DATE
+)
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_product/';
 
@@ -94,7 +107,12 @@ VALUES
 
 -- ── DimStore (Type 1) ────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store 
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store (
+  StoreSK   BIGINT GENERATED ALWAYS AS IDENTITY,
+  StoreID   INT,
+  StoreName STRING,
+  Region    STRING
+)
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_store/';
 
@@ -120,7 +138,16 @@ VALUES (source.StoreID, source.StoreName, source.Region);
 
 -- ── FactSales ─────────────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales 
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales (
+  SalesSK       BIGINT GENERATED ALWAYS AS IDENTITY,
+  TransactionID INT,
+  CustomerSK    BIGINT,
+  ProductSK     BIGINT,
+  StoreSK       BIGINT,
+  Quantity      INT,
+  Amount        DECIMAL(10,2),
+  TxnDate       DATE
+)
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/fact_sales/';
 
