@@ -3,17 +3,7 @@ USE SCHEMA silver;
   
 -- ── DimCustomer (SCD Type 2) ─────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer (
-  CustomerSK   BIGINT GENERATED ALWAYS AS IDENTITY,
-  CustomerID   INT,
-  CustomerName STRING,
-  Email        STRING,
-  City         STRING,
-  Address      STRING,
-  StartDate    DATE,
-  EndDate      DATE,
-  IsActive     INT
-)
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer 
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_customer/';
 
@@ -67,14 +57,7 @@ AND NOT EXISTS (
 
 -- ── DimProduct (Type 1) ──────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product (
-  ProductSK     BIGINT GENERATED ALWAYS AS IDENTITY,
-  ProductID     INT,
-  ProductName   STRING,
-  Category      STRING,
-  UnitPrice     DECIMAL(10,2),
-  EffectiveDate DATE
-)
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product 
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_product/';
 
@@ -107,12 +90,7 @@ VALUES
 
 -- ── DimStore (Type 1) ────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store (
-  StoreSK   BIGINT GENERATED ALWAYS AS IDENTITY,
-  StoreID   INT,
-  StoreName STRING,
-  Region    STRING
-)
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/dim_store/';
 
@@ -138,16 +116,7 @@ VALUES (source.StoreID, source.StoreName, source.Region);
 
 -- ── FactSales ─────────────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales (
-  SalesSK       BIGINT GENERATED ALWAYS AS IDENTITY,
-  TransactionID INT,
-  CustomerSK    BIGINT,
-  ProductSK     BIGINT,
-  StoreSK       BIGINT,
-  Quantity      INT,
-  Amount        DECIMAL(10,2),
-  TxnDate       DATE
-)
+CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales 
 USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/silver/fact_sales/';
 
