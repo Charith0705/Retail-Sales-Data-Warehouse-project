@@ -33,13 +33,6 @@ USING (
   )
 ) AS source
 ON target.CustomerID = source.CustomerID
-WHEN MATCHED THEN UPDATE SET
-  target.CustomerName = source.CustomerName,
-  target.Email        = source.Email,
-  target.City         = source.City,
-  target.Address      = source.Address,
-  target.LastUpdated  = source.LastUpdated,
-  target.ingested_at  = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── PRODUCTS 
@@ -70,11 +63,6 @@ USING (
   )
 ) AS source
 ON target.ProductID = source.ProductID
-WHEN MATCHED THEN UPDATE SET
-  target.ProductName = source.ProductName,
-  target.Category    = source.Category,
-  target.UnitPrice   = source.UnitPrice,
-  target.ingested_at = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── STORES 
@@ -103,11 +91,6 @@ USING (
   )
 ) AS source
 ON target.StoreID = source.StoreID
-WHEN MATCHED THEN UPDATE SET
-  target.StoreName   = source.StoreName,
-  target.Region      = source.Region,
-  target.ingested_at = source.ingested_at
-
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── SALES 
@@ -142,14 +125,6 @@ USING (
   )
 ) AS source
 ON target.TransactionID = source.TransactionID
-WHEN MATCHED THEN UPDATE SET
-  target.CustomerID  = source.CustomerID,
-  target.ProductID   = source.ProductID,
-  target.StoreID     = source.StoreID,
-  target.Quantity    = source.Quantity,
-  target.TxnDate     = source.TxnDate,
-  target.ingested_at = source.ingested_at
-
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── VALIDATION ──────────────────────────────────────────────────
