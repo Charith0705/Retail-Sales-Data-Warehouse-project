@@ -98,6 +98,10 @@ USING (
   )
 ) AS source
 ON target.StoreID = source.StoreID
+WHEN MATCHED THEN UPDATE SET
+  target.StoreName   = source.StoreName,
+  target.Region      = source.Region,
+  target.ingested_at = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
 -- ── SALES 
