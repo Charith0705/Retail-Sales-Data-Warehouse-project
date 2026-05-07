@@ -104,7 +104,7 @@ Source CSVs (SFTP Landing)
 
 1. Upload 4 source CSV files to `s3://bucket/sftp-landing/` with timestamp in filename
 2. Archival script runs — detects single files, no archival needed
-3. Bronze ingests all 4 CSVs into Delta tables (500 rows each)
+3. Bronze ingests all 4 CSVs into Delta tables
 4. Bronze test gate validates row counts, null PKs, duplicates
 5. Silver creates `dim_customer`, `dim_product`, `dim_store`, `fact_sales`
 6. Silver test gate validates SCD2 logic, FK integrity, amount calculation
