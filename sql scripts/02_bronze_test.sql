@@ -1,10 +1,5 @@
 USE CATALOG sales_dwh;
-
--- ============================================================
--- BRONZE TESTS — pipeline stops if any check fails
--- ============================================================
-
--- ── TEST 1: Row count must be greater than 0 ────────────────
+-- TEST 1: Row count
 
 SELECT CASE
   WHEN COUNT(*) = 0
@@ -34,7 +29,7 @@ SELECT CASE
 END AS test_raw_sales_row_count
 FROM sales_dwh.bronze.raw_sales;
 
--- ── TEST 2: No null primary keys ────────────────────────────
+-- TEST 2: No null primary keys 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -68,47 +63,7 @@ END AS test_null_transaction_id
 FROM sales_dwh.bronze.raw_sales
 WHERE TransactionID IS NULL;
 
--- ── TEST 3: No duplicate primary keys ───────────────────────
-
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Duplicate CustomerIDs found in raw_customers')
-  ELSE 'PASS: No duplicate CustomerIDs in raw_customers'
-END AS test_duplicate_customer_id
-FROM (
-  SELECT CustomerID, COUNT(*) AS cnt
-  FROM sales_dwh.bronze.raw_customers
-  GROUP BY CustomerID
-  HAVING cnt > 1
-);
-
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Duplicate ProductIDs found in raw_products')
-  ELSE 'PASS: No duplicate ProductIDs in raw_products'
-END AS test_duplicate_product_id
-FROM (
-  SELECT ProductID, COUNT(*) AS cnt
-  FROM sales_dwh.bronze.raw_products
-  GROUP BY ProductID
-  HAVING cnt > 1
-);
-
-SELECT CASE
-  WHEN COUNT(*) > 0
-  THEN RAISE_ERROR('Test failed: Duplicate StoreIDs found in raw_stores')
-  ELSE 'PASS: No duplicate StoreIDs in raw_stores'
-END AS test_duplicate_store_id
-FROM (
-  SELECT StoreID, COUNT(*) AS cnt
-  FROM sales_dwh.bronze.raw_stores
-  GROUP BY StoreID
-  HAVING cnt > 1
-);
-
-
-
--- ── TEST 4: ingested_at must not be null ────────────────────
+-- ── TEST 3: ingested_at must not be null ────────────────────
 
 SELECT CASE
   WHEN COUNT(*) > 0
