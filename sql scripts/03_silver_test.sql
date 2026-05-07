@@ -1,10 +1,6 @@
 USE CATALOG sales_dwh;
 
--- ============================================================
--- SILVER TESTS — pipeline stops if any check fails
--- ============================================================
-
--- ── TEST 1: No null surrogate keys ──────────────────────────
+-- TEST 1: No null surrogate keys
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -30,7 +26,7 @@ END AS test_null_store_sk
 FROM sales_dwh.silver.dim_store
 WHERE StoreSK IS NULL;
 
--- ── TEST 2: No duplicate active records per CustomerID ──────
+-- TEST 2: No duplicate active records per CustomerID
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -45,8 +41,7 @@ FROM (
   HAVING cnt > 1
 );
 
--- ── TEST 3: SCD2 date continuity ────────────────────────────
--- Expired EndDate must equal new StartDate - 1 day
+-- TEST 3: SCD2 date continuity 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -66,7 +61,7 @@ FROM (
   WHERE expired.EndDate <> active.StartDate - INTERVAL 1 DAY
 );
 
--- ── TEST 4: Every expired record must have one active record─
+-- TEST 4: Every expired record must have one active record
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -84,7 +79,7 @@ FROM (
   )
 );
 
--- ── TEST 5: No nulls in critical Silver columns ──────────────
+-- TEST 5: No nulls in critical Silver columns
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -122,8 +117,7 @@ WHERE StoreID   IS NULL
    OR StoreName IS NULL
    OR Region    IS NULL;
 
--- ── TEST 6: Amount calculation validation ───────────────────
--- Amount must equal Quantity x UnitPrice from dim_product
+-- TEST 6: Amount calculation validation 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -142,8 +136,7 @@ FROM (
   AND   f.Amount IS NOT NULL
 );
 
--- ── TEST 7: Referential integrity ───────────────────────────
--- Every SK in fact_sales must exist in dimension tables
+-- TEST 7: Referential integrity 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -181,7 +174,7 @@ AND NOT EXISTS (
   WHERE d.StoreSK = f.StoreSK
 );
 
--- ── TEST 8: Amount must be positive ─────────────────────────
+-- TEST 8: Amount must be positive 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -191,7 +184,7 @@ END AS test_amount_positive
 FROM sales_dwh.silver.fact_sales
 WHERE Amount <= 0 OR Amount IS NULL;
 
--- ── TEST 9: Surrogate key uniqueness ────────────────────────
+-- TEST 9: Surrogate key uniqueness 
 
 SELECT CASE
   WHEN COUNT(*) > 0

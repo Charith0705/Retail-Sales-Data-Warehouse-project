@@ -1,10 +1,6 @@
 USE CATALOG sales_dwh;
 
--- ============================================================
--- GOLD TESTS — pipeline stops if any check fails
--- ============================================================
-
--- ── TEST 1: Gold row counts must match Silver ────────────────
+-- TEST 1: Gold row counts must match Silver
 
 SELECT CASE
   WHEN gold_count <> silver_count
@@ -50,7 +46,7 @@ FROM (
     (SELECT COUNT(*) FROM sales_dwh.silver.fact_sales) AS silver_count
 );
 
--- ── TEST 2: No nulls on surrogate keys in Gold fact_sales ───
+-- TEST 2: No nulls on surrogate keys
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -62,7 +58,7 @@ WHERE CustomerSK IS NULL
    OR ProductSK  IS NULL
    OR StoreSK    IS NULL;
 
--- ── TEST 3: Active record count matches Silver ───────────────
+-- TEST 3: Active record count matches Silver
 
 SELECT CASE
   WHEN gold_active <> silver_active
@@ -75,7 +71,7 @@ FROM (
     (SELECT COUNT(*) FROM sales_dwh.silver.dim_customer WHERE IsActive = 1) AS silver_active
 );
 
--- ── TEST 4: No negative or zero amounts in Gold ──────────────
+-- TEST 4: No negative or zero amounts in Gold 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -85,7 +81,7 @@ END AS test_gold_amount_positive
 FROM sales_dwh.gold.fact_sales
 WHERE Amount <= 0 OR Amount IS NULL;
 
--- ── TEST 5: TxnDate must be within valid range ───────────────
+-- TEST 5: TxnDate must be within valid range 
 
 SELECT CASE
   WHEN COUNT(*) > 0
@@ -97,7 +93,7 @@ WHERE TxnDate IS NULL
    OR TxnDate > current_date()
    OR TxnDate < TO_DATE('2020-01-01');
 
--- ── TEST 6: No orphan records in Gold fact_sales ────────────
+-- TEST 6: No orphan records in Gold fact_sales
 
 SELECT CASE
   WHEN COUNT(*) > 0

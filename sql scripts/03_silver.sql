@@ -1,7 +1,7 @@
 USE CATALOG sales_dwh;
 USE SCHEMA silver;
   
--- ── DimCustomer (SCD Type 2) ─────────────────────────────────
+-- DimCustomer(SCD Type 2)
 
 CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_customer (
   CustomerSK   BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -65,7 +65,7 @@ AND NOT EXISTS (
   AND   tgt.IsActive   = 1
 );
 
--- ── DimProduct (Type 1) ──────────────────────────────────────
+-- DimProduct 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_product (
   ProductSK     BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -105,7 +105,7 @@ VALUES
   (source.ProductID, source.ProductName, source.Category,
    source.UnitPrice, source.EffectiveDate);
 
--- ── DimStore (Type 1) ────────────────────────────────────────
+-- DimStore 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.silver.dim_store (
   StoreSK   BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -136,7 +136,7 @@ WHEN MATCHED THEN UPDATE SET
 WHEN NOT MATCHED THEN INSERT (StoreID, StoreName, Region)
 VALUES (source.StoreID, source.StoreName, source.Region);
 
--- ── FactSales ─────────────────────────────────────────────────
+-- FactSales 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.silver.fact_sales (
   SalesSK       BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -195,7 +195,7 @@ VALUES
   (source.TransactionID, source.CustomerSK, source.ProductSK,
    source.StoreSK, source.Quantity, source.Amount, source.TxnDate);
 
--- ── VALIDATION ───────────────────────────────────────────────
+-- VALIDATION 
 SELECT 'dim_customer' AS table_name, COUNT(*) AS total_rows,
        SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END) AS active_records
 FROM sales_dwh.silver.dim_customer

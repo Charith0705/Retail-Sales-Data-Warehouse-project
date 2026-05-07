@@ -1,9 +1,3 @@
--- ============================================================
--- SCRIPT  : 04_gold.sql
--- PURPOSE : Write final presentation tables to Gold S3 zone
--- RUN     : After 03_silver.sql completes
--- ============================================================
-
 USE CATALOG sales_dwh;
 USE SCHEMA gold;
 

@@ -138,7 +138,7 @@ USING (
 ON target.TransactionID = source.TransactionID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── VALIDATION ──────────────────────────────────────────────────
+-- VALIDATION 
 SELECT 'raw_customers' AS table_name, COUNT(*) AS row_count
 FROM sales_dwh.bronze.raw_customers
 UNION ALL
