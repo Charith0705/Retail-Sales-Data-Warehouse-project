@@ -1,7 +1,7 @@
 USE CATALOG sales_dwh;
 USE SCHEMA bronze;
 
--- ── CUSTOMERS 
+--CUSTOMERS 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_customers (CustomerID INT,CustomerName STRING, Email STRING, City STRING,Address STRING,LastUpdated STRING,ingested_at TIMESTAMP)USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/customers/';
@@ -27,7 +27,7 @@ WHEN MATCHED THEN UPDATE SET
   target.ingested_at = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── PRODUCTS 
+--PRODUCTS 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_products (ProductID INT,ProductName STRING,Category STRING,UnitPrice DECIMAL(10,2),ingested_at TIMESTAMP)USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/products/';
@@ -46,7 +46,7 @@ USING (
 ON target.ProductID = source.ProductID
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── STORES 
+--STORES 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_stores (StoreID INT,StoreName STRING,Region STRING,ingested_at TIMESTAMP)USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/stores/';
@@ -69,7 +69,7 @@ WHEN MATCHED THEN UPDATE SET
   target.ingested_at = source.ingested_at
 WHEN NOT MATCHED THEN INSERT *;
 
--- ── SALES 
+--SALES 
 
 CREATE TABLE IF NOT EXISTS sales_dwh.bronze.raw_sales (TransactionID INT,CustomerID INT,ProductID INT,StoreID INT,Quantity INT,TxnDate STRING,ingested_at TIMESTAMP)USING DELTA
 LOCATION 's3://sales-dwh-bucket-charith-977574653589-us-east-2-an/bronze/sales/';
