@@ -1,6 +1,4 @@
 name: Sync to Databricks Git Folder
-
-# 1. This tells GitHub to run this job only when you push to the main branch
 on:
   push:
     branches:
@@ -14,11 +12,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 2. Install the official Databricks CLI tool
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
-      # 3. Authenticate and update the folder with the latest code
       - name: Update Databricks Git Folder
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
