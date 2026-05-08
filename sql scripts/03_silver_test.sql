@@ -5,7 +5,7 @@ USE CATALOG sales_dwh;
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No null CustomerSK in dim_customer'
+  ELSE 'No null CustomerSK in dim_customer'
 END AS test_null_customer_sk
 FROM sales_dwh.silver.dim_customer
 WHERE CustomerSK IS NULL;
@@ -13,7 +13,7 @@ WHERE CustomerSK IS NULL;
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No null ProductSK in dim_product'
+  ELSE 'No null ProductSK in dim_product'
 END AS test_null_product_sk
 FROM sales_dwh.silver.dim_product
 WHERE ProductSK IS NULL;
@@ -21,7 +21,7 @@ WHERE ProductSK IS NULL;
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No null StoreSK in dim_store'
+  ELSE 'No null StoreSK in dim_store'
 END AS test_null_store_sk
 FROM sales_dwh.silver.dim_store
 WHERE StoreSK IS NULL;
@@ -31,7 +31,7 @@ WHERE StoreSK IS NULL;
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No duplicate active CustomerIDs in dim_customer'
+  ELSE 'No duplicate active CustomerIDs in dim_customer'
 END AS test_duplicate_active_customer
 FROM (
   SELECT CustomerID, COUNT(*) AS cnt
@@ -46,7 +46,7 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: SCD2 date continuity is correct'
+  ELSE 'SCD2 date continuity is correct'
 END AS test_scd2_date_continuity
 FROM (
   SELECT
@@ -56,8 +56,8 @@ FROM (
   FROM sales_dwh.silver.dim_customer expired
   INNER JOIN sales_dwh.silver.dim_customer active
     ON  expired.CustomerID = active.CustomerID
-    AND expired.IsActive   = 0
-    AND active.IsActive    = 1
+    AND expired.IsActive = 0
+    AND active.IsActive = 1
   WHERE expired.EndDate <> active.StartDate - INTERVAL 1 DAY
 );
 
@@ -66,7 +66,7 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: Every expired customer has an active record'
+  ELSE 'Every expired customer has an active record'
 END AS test_expired_has_active
 FROM (
   SELECT CustomerID
@@ -84,51 +84,51 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No nulls in critical dim_customer columns'
+  ELSE 'No nulls in critical dim_customer columns'
 END AS test_null_customer_columns
 FROM sales_dwh.silver.dim_customer
-WHERE CustomerID   IS NULL
+WHERE CustomerID IS NULL
    OR CustomerName IS NULL
-   OR Email        IS NULL
-   OR City         IS NULL
-   OR Address      IS NULL
-   OR StartDate    IS NULL
-   OR EndDate      IS NULL
-   OR IsActive     IS NULL;
+   OR Email IS NULL
+   OR City IS NULL
+   OR Address IS NULL
+   OR StartDate IS NULL
+   OR EndDate IS NULL
+   OR IsActive IS NULL;
 
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No nulls in critical dim_product columns'
+  ELSE 'No nulls in critical dim_product columns'
 END AS test_null_product_columns
 FROM sales_dwh.silver.dim_product
-WHERE ProductID   IS NULL
+WHERE ProductID IS NULL
    OR ProductName IS NULL
-   OR Category    IS NULL
-   OR UnitPrice   IS NULL;
+   OR Category IS NULL
+   OR UnitPrice IS NULL;
 
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: No nulls in critical dim_store columns'
+  ELSE 'No nulls in critical dim_store columns'
 END AS test_null_store_columns
 FROM sales_dwh.silver.dim_store
-WHERE StoreID   IS NULL
+WHERE StoreID IS NULL
    OR StoreName IS NULL
-   OR Region    IS NULL;
+   OR Region IS NULL;
 
 -- TEST 6: Amount calculation validation 
 
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: Amount calculation is correct'
+  ELSE 'Amount calculation is correct'
 END AS test_amount_calculation
 FROM (
   SELECT
     f.TransactionID,
-    f.Amount                                AS actual_amount,
-    f.Quantity * p.UnitPrice                AS expected_amount
+    f.Amount AS actual_amount,
+    f.Quantity * p.UnitPrice AS expected_amount
   FROM sales_dwh.silver.fact_sales f
   INNER JOIN sales_dwh.silver.dim_product p
     ON f.ProductSK = p.ProductSK
@@ -141,7 +141,7 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: All CustomerSKs in fact_sales exist in dim_customer'
+  ELSE 'All CustomerSKs in fact_sales exist in dim_customer'
 END AS test_customer_fk
 FROM sales_dwh.silver.fact_sales f
 WHERE f.CustomerSK IS NOT NULL
@@ -153,7 +153,7 @@ AND NOT EXISTS (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: All ProductSKs in fact_sales exist in dim_product'
+  ELSE 'All ProductSKs in fact_sales exist in dim_product'
 END AS test_product_fk
 FROM sales_dwh.silver.fact_sales f
 WHERE f.ProductSK IS NOT NULL
@@ -165,7 +165,7 @@ AND NOT EXISTS (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: All StoreSKs in fact_sales exist in dim_store'
+  ELSE 'All StoreSKs in fact_sales exist in dim_store'
 END AS test_store_fk
 FROM sales_dwh.silver.fact_sales f
 WHERE f.StoreSK IS NOT NULL
@@ -179,7 +179,7 @@ AND NOT EXISTS (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: All amounts are positive'
+  ELSE 'All amounts are positive'
 END AS test_amount_positive
 FROM sales_dwh.silver.fact_sales
 WHERE Amount <= 0 OR Amount IS NULL;
@@ -189,7 +189,7 @@ WHERE Amount <= 0 OR Amount IS NULL;
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: CustomerSK is unique in dim_customer'
+  ELSE 'CustomerSK is unique in dim_customer'
 END AS test_customer_sk_unique
 FROM (
   SELECT CustomerSK, COUNT(*) AS cnt
@@ -201,7 +201,7 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: ProductSK is unique in dim_product'
+  ELSE 'ProductSK is unique in dim_product'
 END AS test_product_sk_unique
 FROM (
   SELECT ProductSK, COUNT(*) AS cnt
@@ -213,7 +213,7 @@ FROM (
 SELECT CASE
   WHEN COUNT(*) > 0
   THEN CAST(1/0 AS STRING)
-  ELSE 'PASS: StoreSK is unique in dim_store'
+  ELSE 'StoreSK is unique in dim_store'
 END AS test_store_sk_unique
 FROM (
   SELECT StoreSK, COUNT(*) AS cnt
