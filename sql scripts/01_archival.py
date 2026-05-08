@@ -1,23 +1,23 @@
 import re
 from datetime import datetime
 
-# ── CONFIG ──────────────────────────────────────────────────
-BUCKET         = "s3://sales-dwh-bucket-charith-977574653589-us-east-2-an"
-SFTP_ZONE      = f"{BUCKET}/sftp-landing/"
-BRONZE_ZONE    = f"{BUCKET}/bronze/"
-SILVER_ZONE    = f"{BUCKET}/silver/"
-ARCHIVE_SFTP   = f"{BUCKET}/archive/sftp/"
+#CONFIG 
+BUCKET = "s3://sales-dwh-bucket-charith-977574653589-us-east-2-an"
+SFTP_ZONE = f"{BUCKET}/sftp-landing/"
+BRONZE_ZONE = f"{BUCKET}/bronze/"
+SILVER_ZONE = f"{BUCKET}/silver/"
+ARCHIVE_SFTP = f"{BUCKET}/archive/sftp/"
 ARCHIVE_BRONZE = f"{BUCKET}/archive/bronze/"
 ARCHIVE_SILVER = f"{BUCKET}/archive/silver/"
 
 SOURCES = {
     "customers" : "customers_src",
-    "products"  : "products_src",
-    "stores"    : "stores_src",
-    "sales"     : "sales_transactions_src"
+    "products" : "products_src",
+    "stores" : "stores_src",
+    "sales" : "sales_transactions_src"
 }
 
-# ── HELPERS ─────────────────────────────────────────────────
+#HELPERS 
 
 def list_files(path):
     try:
@@ -26,9 +26,9 @@ def list_files(path):
         return []
 
 def parse_timestamp(filepath, source_prefix):
-    name    = filepath.split("/")[-1]
+    name = filepath.split("/")[-1]
     pattern = rf"{source_prefix}_(\d{{2}})(\d{{2}})(\d{{4}})(\d{{2}})(\d{{2}})(\d{{2}})\.csv"
-    match   = re.search(pattern, name)
+    match = re.search(pattern, name)
     if not match:
         print(f"WARNING: Cannot parse timestamp from '{name}'")
         return None
@@ -46,7 +46,7 @@ def move_file(src, dst):
 
 def archive_zone(zone_path, archive_path, source_name, source_prefix):
     all_files = list_files(zone_path)
-    matching  = [f for f in all_files if source_prefix in f.split("/")[-1]]
+    matching = [f for f in all_files if source_prefix in f.split("/")[-1]]
 
     if len(matching) <= 1:
         return "OK"
@@ -62,8 +62,8 @@ def archive_zone(zone_path, archive_path, source_name, source_prefix):
         return "ERROR"
 
     timestamped.sort(key=lambda x: x[0], reverse=True)
-    latest_file            = timestamped[0][1]
-    older_files            = timestamped[1:]
+    latest_file = timestamped[0][1]
+    older_files = timestamped[1:]
 
     print(f"Keeping : {latest_file.split('/')[-1]}")
 
@@ -75,19 +75,19 @@ def archive_zone(zone_path, archive_path, source_name, source_prefix):
 
 
 
-# ── MAIN ────────────────────────────────────────────────────
+#MAIN 
 
 print("Archival started")
 
 for source_name, source_prefix in SOURCES.items():
     for zone_path, archive_path in [
-        (SFTP_ZONE,   ARCHIVE_SFTP),
+        (SFTP_ZONE, ARCHIVE_SFTP),
         (BRONZE_ZONE, ARCHIVE_BRONZE),
         (SILVER_ZONE, ARCHIVE_SILVER)
     ]:
         archive_zone(zone_path, archive_path, source_name, source_prefix)
 
-# ── VALIDATION ──────────────────────────────────────────────
+#VALIDATION 
 
 print("\nPost-archival file counts:")
 
@@ -95,7 +95,7 @@ failed = False
 
 for source_name, source_prefix in SOURCES.items():
     for zone_path, zone_label in [
-        (SFTP_ZONE,   "sftp"),
+        (SFTP_ZONE, "sftp"),
         (BRONZE_ZONE, "bronze"),
         (SILVER_ZONE, "silver")
     ]:
